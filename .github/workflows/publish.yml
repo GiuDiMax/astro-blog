@@ -1,4 +1,4 @@
-name: Build & Deploy Astro with Cache
+name: Build & Deploy Astro + Pages CMS
 
 on:
   push:
@@ -11,10 +11,8 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    outputs:
-      page_url: ${{ steps.deploy.outputs.page_url }}
     steps:
       # 1️⃣ Checkout repo
       - name: Checkout repository
@@ -48,5 +46,9 @@ jobs:
 
       # 6️⃣ Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deploy
         uses: actions/deploy-pages@v4
+        with:
+          # Se vuoi usare un branch specifico invece del default:
+          # branch: gh-pages
+          # path della build (di default Astro usa ./dist)
+          path: ./dist
