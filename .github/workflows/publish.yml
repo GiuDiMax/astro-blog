@@ -8,23 +8,39 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Node.js + cache npm
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: "npm"
 
+      # 3️⃣ Restore Astro build cache
+      - name: Cache Astro build
+        uses: actions/cache@v3
+        with:
+          path: |
+            .astro
+            node_modules
+          key: ${{ runner.os }}-astro-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-astro-
+
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # 5️⃣ Build site
       - name: Build site
         run: npm run build
 
+      # 6️⃣ Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # o ./docs se configuri Astro così
+          publish_dir: ./dist
